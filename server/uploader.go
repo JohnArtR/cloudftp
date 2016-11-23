@@ -4,13 +4,13 @@ import "io"
 import (
 	"time"
 	"log"
+	//"io/ioutil"
 	//"os"
-	"io/ioutil"
-	"os"
 )
 
 func (p *Paradise) saveToDisk(passive *Passive) error {
-	err := ioutil.WriteFile(Settings.StorageDirectory + "/lol.jpg", passive.data, os.FileMode(0777))
+	err := FileService.Save(passive.data, p.param)
+	//err := ioutil.WriteFile(Settings.StorageDirectory + "/" + p.param, passive.data, os.FileMode(0777))
 	//f, err := os.Create(Settings.StorageDirectory + "/lol.jpg")
 	if err != nil {
 		return err
@@ -23,7 +23,7 @@ func (p *Paradise) HandleStore() {
 	if passive == nil {
 		return
 	}
-
+	log.Printf(" [INFO] Receiving file %s", p.param)
 	p.writeMessage(150, "Data transfer starting")
 	if waitTimeout(&passive.waiter, time.Minute) {
 		p.writeMessage(550, "Could not get passive connection.")
@@ -66,8 +66,10 @@ func (p *Paradise) storeOrAppend(passive *Passive) (int64, error) {
 
 	var total int64
 	var n int
+	var iter int = 0
 	total = int64(len(p.buffer))
 	for {
+		iter++
 		temp_buffer := make([]byte, 20971520) // reads 20MB at a time
 		n, err = passive.connection.Read(temp_buffer)
 		total += int64(n)
@@ -75,8 +77,11 @@ func (p *Paradise) storeOrAppend(passive *Passive) (int64, error) {
 		if err != nil {
 			break
 		}
-		// TODO send temp_buffer to where u want bits stored
-		passive.data = append(passive.data, temp_buffer...)
+		passive.data = append(passive.data, temp_buffer[0:n]...)
+		log.Printf(" [DEBUG] Data transfer control (%s) (%d)" +
+			"\n\tbuf size: %d" +
+			"\n\treaded: %d" +
+			"\n\ttotal real: %d", p.param, iter, len(temp_buffer), n, len(passive.data))
 		if err != nil {
 			break
 		}
@@ -96,7 +101,7 @@ func (p *Paradise) readFirst512Bytes(passive *Passive) error {
 		if err != nil {
 			break
 		}
-		log.Print(string(temp_buffer))
+		//log.Print(string(temp_buffer))
 		p.buffer = append(p.buffer, temp_buffer[0:n]...)
 
 		if len(p.buffer) >= 512 {

@@ -1,5 +1,7 @@
 package db
 
+import "time"
+
 type User struct {
 	Username	string
 	Pssword		string
@@ -10,5 +12,6 @@ type User struct {
 type File struct {
 	Name string
 	Size int
+	UploadTime time.Time
 	User string
 }

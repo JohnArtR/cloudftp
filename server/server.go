@@ -7,12 +7,17 @@ import "net"
 import "strings"
 import "sync"
 import "time"
-import "github.com/JohnArtR/cloudftp/paradise"
+import (
+	"github.com/JohnArtR/cloudftp/paradise"
+	"log"
+	"github.com/JohnArtR/cloudftp/storage"
+)
 
 var CommandMap map[string]func(*Paradise)
 var ConnectionMap map[string]*Paradise
 var UpSince int64
 var FileManager *paradise.FileManager
+var FileService storage.FileManager
 var AuthManager *paradise.AuthManager
 
 type Paradise struct {
@@ -60,7 +65,6 @@ func init() {
 	CommandMap["AUTH"] = (*Paradise).HandleAuth
 	CommandMap["PROT"] = (*Paradise).HandleProt
 	CommandMap["PBSZ"] = (*Paradise).HandlePbsz
-
 	ConnectionMap = make(map[string]*Paradise)
 }
 
@@ -102,6 +106,7 @@ func (p *Paradise) HandleCommands() {
 			break
 		}
 		command, param := parseLine(line)
+		log.Printf(" [INFO] Cmd recv: %s, params: %s", command, param)
 		p.command = command
 		p.param = param
 

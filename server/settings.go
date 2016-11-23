@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"log"
 	"github.com/JohnArtR/cloudftp/db"
+	"github.com/JohnArtR/cloudftp/storage"
 )
 
 const (
@@ -63,6 +64,7 @@ func ReadSettings() ParadiseSettings {
 	if err := toml.Unmarshal(buf, &config); err != nil {
 		panic(err)
 	}
+	FileService = storage.FileManager(storage.NewGCloudFileService())
 	return config
 }
 
@@ -71,6 +73,7 @@ func DBSetup()  {
 	if dbEngine = os.Getenv(ENV_DB_ENGINE); strings.EqualFold(dbEngine, "") {
 		log.Fatalf(" [ERROR] Env variable $%s not set", ENV_DB_ENGINE)
 	}
+	FileService = storage.FileManager(storage.NewGCloudFileService())
 	dbHost, dbPort, dbName := getDBParams()
 	switch dbEngine {
 	case DB_ENGINE_MONGO:
