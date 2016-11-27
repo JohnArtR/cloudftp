@@ -77,8 +77,8 @@ func DBSetup()  {
 	dbHost, dbPort, dbName := getDBParams()
 	switch dbEngine {
 	case DB_ENGINE_MONGO:
-		UserRepository = db.UserRepository(db.MongoEngine{Host: dbHost, Port:dbPort, DBName:dbName})
-		FileRepository = db.FileRepository(db.MongoEngine{Host: dbHost, Port:dbPort, DBName:dbName})
+		db.UserRepo = db.UserRepository(db.MongoEngine{Host: dbHost, Port:dbPort, DBName:dbName})
+		db.FileRepo = db.FileRepository(db.MongoEngine{Host: dbHost, Port:dbPort, DBName:dbName})
 	case DB_ENGINE_POSTGRES:
 		log.Println(" [INFO] Postgres engine not supported now. CloudFTP will be exit.")
 	default:

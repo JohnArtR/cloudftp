@@ -4,7 +4,7 @@ import "time"
 
 type User struct {
 	Username	string
-	Pssword		string
+	Password	string
 	HomeFolder	string
 	StorageType	string
 }

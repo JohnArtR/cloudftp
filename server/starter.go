@@ -54,6 +54,7 @@ func stopAcceptingNewConnections() {
 func Start(fm *paradise.FileManager, am *paradise.AuthManager, gracefulChild bool) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	Settings = ReadSettings()
+	DBSetup()
 	fmt.Println("starting...")
 	FileManager = fm
 	AuthManager = am

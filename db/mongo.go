@@ -59,7 +59,6 @@ func (repo MongoEngine) FindFiles(userName string) (files []File, err error) {
 
 func (repo MongoEngine) SaveUser(user User) error {
 	db := repo.getDBConnection()
-	repo.session.Close()
 	collection := db.C(MONGO_USERS_COLL)
 	err := collection.Insert(user)
 	return err

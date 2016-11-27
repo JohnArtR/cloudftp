@@ -11,6 +11,7 @@ import (
 	"github.com/JohnArtR/cloudftp/paradise"
 	"log"
 	"github.com/JohnArtR/cloudftp/storage"
+	"github.com/JohnArtR/cloudftp/db"
 )
 
 var CommandMap map[string]func(*Paradise)
@@ -25,7 +26,7 @@ type Paradise struct {
 	reader        *bufio.Reader
 	theConnection net.Conn
 	waiter        sync.WaitGroup
-	user          string
+	userName      string
 	homeDir       string
 	path          string
 	ip            string
@@ -36,7 +37,7 @@ type Paradise struct {
 	cid           string
 	connectedAt   int64
 	passive       *Passive
-	userInfo      map[string]string
+	user          db.User
 	tls           bool
 }
 
@@ -78,8 +79,8 @@ func NewParadise(connection net.Conn, cid string, now int64) *Paradise {
 	p.ip = connection.RemoteAddr().String()
 	p.cid = cid
 	p.connectedAt = now
-	p.userInfo = make(map[string]string)
-	p.userInfo["path"] = "/"
+	//p.userInfo = make(map[string]string)
+	//p.userInfo["path"] = "/"
 	return &p
 }
 

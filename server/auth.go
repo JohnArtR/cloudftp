@@ -4,19 +4,23 @@ import "crypto/tls"
 import "bufio"
 
 func (p *Paradise) HandleUser() {
-	p.user = p.param
+	p.userName = p.param
 	p.writeMessage(331, "User name ok, password required")
 }
 
 func (p *Paradise) HandlePass() {
 	// think about using https://developer.bitium.com
-	if AuthManager.CheckUser(p.user, p.param, &p.userInfo) {
+	if AuthManager.CheckUser(p.userName, p.param, &p.user) {
 		p.writeMessage(230, "Password ok, continue")
 	} else {
-		p.writeMessage(530, "Incorrect password, not logged in")
-		p.theConnection.Close()
-		delete(ConnectionMap, p.cid)
+		p.incorrectPassword()
 	}
+}
+
+func (p *Paradise) incorrectPassword()  {
+	p.writeMessage(530, "Incorrect password, not logged in")
+	p.theConnection.Close()
+	delete(ConnectionMap, p.cid)
 }
 
 func (p *Paradise) HandleAuth() {

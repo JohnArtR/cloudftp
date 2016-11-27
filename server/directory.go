@@ -37,7 +37,7 @@ func (p *Paradise) HandleList() {
 func (p *Paradise) dirList() ([]byte, error) {
 	var buf bytes.Buffer
 
-	files, err := FileManager.GetFiles(&p.userInfo)
+	files, err := FileManager.GetFiles(&p.user)
 	for _, file := range files {
 
 		if file["isDir"] != "" {

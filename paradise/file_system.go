@@ -1,7 +1,9 @@
 package paradise
 
+import "github.com/JohnArtR/cloudftp/db"
+
 type FileSystem interface {
-	GetFiles(userInfo *map[string]string) ([]map[string]string, error)
+	GetFiles(user *db.User) ([]map[string]string, error)
 }
 
 type FileManager struct {
@@ -11,7 +13,7 @@ type FileManager struct {
 type DefaultFileSystem struct {
 }
 
-func (dfs DefaultFileSystem) GetFiles(userInfo *map[string]string) ([]map[string]string, error) {
+func (dfs DefaultFileSystem) GetFiles(user *db.User) ([]map[string]string, error) {
 	files := make([]map[string]string, 0)
 
 	//if p.user == "test" {
