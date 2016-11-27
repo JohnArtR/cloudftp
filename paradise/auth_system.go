@@ -30,7 +30,7 @@ func (das DefaultAuthSystem) CheckUser(userName, pass string, user *db.User) boo
 	io.WriteString(enc, pass)
 	encPass := fmt.Sprintf("%x", enc.Sum(nil))
 	if strings.EqualFold(u.Password, encPass) {
-		user = &u
+		*user = *u
 		return true
 	}
 	return false

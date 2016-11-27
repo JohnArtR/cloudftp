@@ -6,6 +6,8 @@ import (
 	"log"
 	//"io/ioutil"
 	//"os"
+	"github.com/JohnArtR/cloudftp/db"
+	"fmt"
 )
 
 func (p *Paradise) saveToDisk(passive *Passive) error {
@@ -38,14 +40,24 @@ func (p *Paradise) HandleStore() {
 
 	_, err := p.storeOrAppend(passive)
 	if err == io.EOF {
-		p.writeMessage(226, "OK, received some bytes") // TODO send total in message
+		p.writeMessage(226, fmt.Sprintf("OK, received %d bytes", len(passive.data))) // TODO send total in message
 		err := p.saveToDisk(passive)
 		if err != nil {
 			log.Println(" [DEBUG] Error while saving file to disk")
+			p.writeMessage(550, "Error while dump file to disk")
+			p.closePassive(passive)
+			return
 		}
-
+		fileInfo := db.File{Name:p.param, Size:len(passive.data), UploadTime:time.Now(), User:p.user.Username}
+		err = db.FileRepo.SaveFile(fileInfo)
+		if err != nil {
+			p.writeMessage(550, "Something error")
+			log.Printf(" [ERROR] Error while inserting FileInfo: %s", err)
+		}
 	} else {
 		p.writeMessage(550, "Error with upload: "+err.Error())
+		p.closePassive(passive)
+		return
 	}
 
 	p.closePassive(passive)

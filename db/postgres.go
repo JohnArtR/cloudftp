@@ -6,8 +6,8 @@ type PostgresRepository struct {
 	DBName string
 }
 
-func (repo PostgresRepository) FindUser(userName string) (User, error) {
-	return User{}, nil
+func (repo PostgresRepository) FindUser(userName string) (*User, error) {
+	return &User{}, nil
 }
 
 func (repo PostgresRepository) FindFile(fileName string) (File, error) {

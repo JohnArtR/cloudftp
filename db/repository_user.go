@@ -9,6 +9,6 @@ type UserSaver interface {
 }
 
 type UserRepository interface {
-	FindUser(userName string) (User, error)
+	FindUser(userName string) (*User, error)
 	SaveUser(user User) error
 }

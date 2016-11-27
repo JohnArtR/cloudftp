@@ -27,12 +27,12 @@ func (repo MongoEngine) getDBConnection() *mgo.Database {
 	return repo.session.DB(repo.DBName)
 }
 
-func (repo MongoEngine) FindUser(userName string) (user User, err error) {
+func (repo MongoEngine) FindUser(userName string) (user *User, err error) {
 	db := repo.getDBConnection()
 	collection := db.C(MONGO_USERS_COLL)
 	err = collection.Find(bson.M{"username": userName}).One(&user)
 	if err != nil {
-		return User{}, err
+		return &User{}, err
 	}
 	return user, nil
 }
