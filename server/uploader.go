@@ -3,11 +3,9 @@ package server
 import "io"
 import (
 	"time"
-	"log"
-	//"io/ioutil"
-	//"os"
 	"github.com/JohnArtR/cloudftp/db"
 	"fmt"
+	"log"
 )
 
 func (p *Paradise) saveToDisk(passive *Passive) error {
@@ -40,7 +38,7 @@ func (p *Paradise) HandleStore() {
 
 	_, err := p.storeOrAppend(passive)
 	if err == io.EOF {
-		p.writeMessage(226, fmt.Sprintf("OK, received %d bytes", len(passive.data))) // TODO send total in message
+		p.writeMessage(226, fmt.Sprintf("OK, received %d bytes", len(passive.data)))
 		err := p.saveToDisk(passive)
 		if err != nil {
 			log.Println(" [DEBUG] Error while saving file to disk")
@@ -78,11 +76,9 @@ func (p *Paradise) storeOrAppend(passive *Passive) (int64, error) {
 
 	var total int64
 	var n int
-	var iter int = 0
 	total = int64(len(p.buffer))
 	for {
-		iter++
-		temp_buffer := make([]byte, 20971520) // reads 20MB at a time
+		temp_buffer := make([]byte, 1048576) // reads 1MB at a time
 		n, err = passive.connection.Read(temp_buffer)
 		total += int64(n)
 
@@ -90,10 +86,6 @@ func (p *Paradise) storeOrAppend(passive *Passive) (int64, error) {
 			break
 		}
 		passive.data = append(passive.data, temp_buffer[0:n]...)
-		log.Printf(" [DEBUG] Data transfer control (%s) (%d)" +
-			"\n\tbuf size: %d" +
-			"\n\treaded: %d" +
-			"\n\ttotal real: %d", p.param, iter, len(temp_buffer), n, len(passive.data))
 		if err != nil {
 			break
 		}

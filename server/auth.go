@@ -3,7 +3,6 @@ package server
 import "crypto/tls"
 import (
 	"bufio"
-	"log"
 )
 
 func (p *Paradise) HandleUser() {
